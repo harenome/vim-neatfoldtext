@@ -1,11 +1,9 @@
 " Forked from http://dhruvasagar.com/2013/03/28/vim-better-foldtext
-
 if exists('g:loaded_NeatFoldText') || &cp
   finish
 endif
 let g:loaded_NeatFoldText = 1
 
-let g:NeatFoldTextFancy = 1
 if ! exists('g:NeatFoldTextFillChar')
     if exists('g:NeatFoldTextFancy') && g:NeatFoldTextFancy == 1
         let g:NeatFoldTextFillChar = '·'
@@ -53,19 +51,44 @@ elseif (strlen('g:NeatFoldTextFoldLevel') != 1)
     let g:NeatFoldTextFoldLevel = '-'
 endif
 
-let g:NeatFoldTextLineCount = 1
+if ! exists('g:NeatFoldTextFoldLevelScale')
+    let g:NeatFoldTextFoldLevelScale = 1
+endif
+
+" if ! &expandtab
+"     let g:NeatFoldTextIndentSize = &tabstop
+" else
+"     let g:NeatFoldTextIndentSize = 1
+" endif
 
 function! NeatFoldText()
-    let line = ' ' . substitute(getline(v:foldstart), '^\s*"\?\s*\|\s*"\?\s*{{' . '{\d*\s*', '', 'g') . ' '
+    " If multiline comments start with a '/*' or '/**' on a separate line.
+    if match(getline(v:foldstart), '^\s*/\*\+\s*$') == -1
+        let line = ' ' . substitute(getline(v:foldstart), '^\s*"\?\s*\|\s*"\?\s*{{' . '{\d*\s*', '', 'g') . ' '
+    else
+        let line = ' ' . substitute(getline(v:foldstart + 1), '^\s*"\?\s*\|\s*"\?\s*{{' . '{\d*\s*', '', 'g') . ' '
+    endif
 
+    " Number of lines
     if exists('g:NeatFoldTextLineCount') && g:NeatFoldTextLineCount == 0
         let lines_count_text = ''
     else
-        let lines_count = v:foldend - v:foldstart + 1
-        let lines_count_text = g:NeatFoldTextCountSurroundLeft . printf("%10s", lines_count . ' lines') . g:NeatFoldTextCountSurroundRight
+        " let lines_count = v:foldend - v:foldstart + 1
+        let lines_count_text = g:NeatFoldTextCountSurroundLeft
+        let lines_count_text = lines_count_text . printf("%10s", v:foldend - v:foldstart + 1 . ' lines')
+        let lines_count_text = lines_count_text . g:NeatFoldTextCountSurroundRight
     endif
 
-    let foldtextstart = strpart(g:NeatFoldTextSymbol . repeat(g:NeatFoldTextFoldLevel, v:foldlevel*2) . line, 0, (winwidth(0)*2)/3)
+    if exists('g:NeatFoldTextIndent') && g:NeatFoldTextIndent == 1 && match(getline(v:foldstart), '^\s\+') != -1
+        " let foldindent = repeat(' ', match(getline(v:foldstart), '\S') * g:NeatFoldTextIndentSize)
+        let foldindent = repeat(' ', match(getline(v:foldstart), '\S'))
+    else
+        let foldindent = ''
+    endif
+
+    let foldlevel = repeat(g:NeatFoldTextFoldLevel, v:foldlevel * g:NeatFoldTextFoldLevelScale)
+
+    let foldtextstart = strpart(foldindent . g:NeatFoldTextSymbol . foldlevel  . line, 0, (winwidth(0)*2)/3)
     let foldtextend = lines_count_text . repeat(g:NeatFoldTextFillChar, 8)
     let foldtextlength = strlen(substitute(foldtextstart . foldtextend, '.', 'x', 'g')) + &foldcolumn
     return foldtextstart . repeat(g:NeatFoldTextFillChar, winwidth(0)-foldtextlength) . foldtextend
