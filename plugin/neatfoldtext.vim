@@ -103,7 +103,15 @@ function! NeatFoldText()
     if g:NeatFoldTextShowLineCount == 1
         \ && (g:NeatFoldTextCountCommentsLines == 1 || match(getline(v:foldstart), '^\s*/\*\+') == -1)
         let lines_count_text = g:NeatFoldTextCountSurroundLeft
-        let lines_count_text = lines_count_text . printf("%10s", v:foldend - v:foldstart + 1 . ' lines')
+        " Minimize the size if the window is too small.
+        " Really useful to check this? It occured to me a few times, but it
+        " was a very special case.
+        if winwidth(0) < 60
+            let count_text = printf("%4s", v:foldend - v:foldstart + 1)
+        else
+            let count_text = printf("%10s", v:foldend - v:foldstart + 1 . ' lines')
+        endif
+        let lines_count_text = lines_count_text . count_text
         let lines_count_text = lines_count_text . g:NeatFoldTextCountSurroundRight
     endif
 
@@ -125,8 +133,14 @@ function! NeatFoldText()
     " - Show that the text is being cut, when it is being cut.
     " - Cut at 80 chars? (Well...a bit less than 80, if we want to show it's
     "   being cut...)
-    " - Put line count back to left?
-    let foldtextstart = strpart(foldindent . g:NeatFoldTextSymbol . foldlevel . line, 0, (winwidth(0)*2)/3)
+    " - Provide the ability to put line count back to the left?
+    let maxwidth = winwidth(0) * 2 / 3
+    let textstart = foldindent . g:NeatFoldTextSymbol . foldlevel . line
+    if strlen(textstart) > maxwidth
+        let foldtextstart = strpart(textstart, 0, maxwidth - 2) . '… '
+    else
+        let foldtextstart = strpart(textstart, 0, maxwidth)
+    endif
     if match(getline(v:foldstart), '^\s*/\*\+') != -1 && g:NeatFoldTextZenComments == 1
         return foldtextstart . repeat(' ', winwidth(0) - strlen(foldtextstart) - &foldcolumn)
     else
