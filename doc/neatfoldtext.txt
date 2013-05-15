@@ -5,21 +5,22 @@
 CONTENTS                                                 *neatfoldtext-contents*
 --------
 
-    1. Intro..................................|neatfoldtext-intro|
-    2. Usage..................................|neatfoldtext-usage|
-    3. Options................................|neatfoldtext-options|
-      3.1  Loaded.............................|g:loaded_NeatFoldText|
-      3.2  FillChar...........................|g:NeatFoldTextFillChar|
-      3.3  Symbol.............................|g:NeatFoldTextSymbol|
-      3.4  CountSurroundLeft..................|g:NeatFoldTextCountSurroundLeft|
-      3.5  CountSurroundRight.................|g:NeatFoldTextCountSurroundRight|
-      3.6  FoldLevelSymbol....................|g:NeatFoldTextFoldLevelSymbol|
-      3.7  FoldLevelScale.....................|g:NeatFoldTextFoldLevelScale|
-      3.8  Indent.............................|g:NeatFoldTextIndent|
-      3.9  ShowLineCount......................|g:NeatFoldTextShowLineCount|
-      3.10 CountCommentsLines.................|g:NeatFoldTextCountCommentsLines|
-      3.11 ZenComments........................|g:NeatFoldTextZenComments|
-      3.12 Fancy..............................|g:NeatFoldTextFancy|
+    1. Intro................................|neatfoldtext-intro|
+    2. Usage................................|neatfoldtext-usage|
+    3. Options..............................|neatfoldtext-options|
+      3.1  Loaded...........................|g:loaded_NeatFoldText|
+      3.2  FillChar.........................|g:NeatFoldTextFillChar|
+      3.3  Symbol...........................|g:NeatFoldTextSymbol|
+      3.4  CountSurroundLeft................|g:NeatFoldTextCountSurroundLeft|
+      3.5  CountSurroundRight...............|g:NeatFoldTextCountSurroundRight|
+      3.6  FoldLevelSymbol..................|g:NeatFoldTextFoldLevelSymbol|
+      3.7  FoldLevelScale...................|g:NeatFoldTextFoldLevelScale|
+      3.8  Indent...........................|g:NeatFoldTextIndent|
+      3.9  ShowLineCount....................|g:NeatFoldTextShowLineCount|
+      3.10 CountCommentsLines...............|g:NeatFoldTextCountCommentsLines|
+      3.11 UnobstrusiveComments.............|g:NeatFoldTextUnobstrusiveComments|
+      3.12 ZenComments......................|g:NeatFoldTextZenComments|
+      3.13 Fancy............................|g:NeatFoldTextFancy|
 
 ==============================================================================
 INTRO                                                       *neatfoldtext-intro*
@@ -171,6 +172,17 @@ Note: It is possible to disable the line count display for every fold. See
 defaults to 1.
 
 -------------------------------------------------------------------------------
+The 'g:NeatFoldTextUnobstrusiveComments' option~
+                                            *g:NeatFoldTextUnobstrusiveComments*
+
+Hide the real comments and only show that there is a comment. Per default
+this is set to 0
+
+Example: >
+    let g:NeatFoldTextUnobstrusiveComments = 1
+<
+
+-------------------------------------------------------------------------------
 The 'g:NeatFoldTextZenComments' option~
                                                      *g:NeatFoldTextZenComments*
 
@@ -180,6 +192,7 @@ the fold symbol, the fold level and the text itself are shown.
 Example: >
     let g:NeatFoldTextZenComments = 1
 <
+
 -------------------------------------------------------------------------------
 The 'g:NeatFoldTextFancy' option~
                                                            *g:NeatFoldTextFancy*
