@@ -2,7 +2,7 @@
 " Plugin: NeatFoldText
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
 " URL: https://github.com/HarnoRanaivo/vim-neatfoldtext
-" Version: 0.1
+" Version: 0.2
 "
 " It started from http://dhruvasagar.com/2013/03/28/vim-better-foldtext
 "==============================================================================
@@ -18,28 +18,38 @@ function s:SetFancyFoldText() "{{{
     if ! exists('g:NeatFoldTextFillChar') || strlen('g:NeatFoldTextFillChar') != 1
         let g:NeatFoldTextFillChar = '·'
     endif
+
     if ! exists('g:NeatFoldTextSymbol') || strlen('g:NeatFoldTextSymbol') != 1
         " TODO: Test utf8, etc.
         let g:NeatFoldTextSymbol = '▸'
     endif
+
     if ! exists('g:NeatFoldTextCountSurroundLeft')
         let g:NeatFoldTextCountSurroundLeft = '| '
     endif
+
     if ! exists('g:NeatFoldTextCountSurroundRight')
         let g:NeatFoldTextCountSurroundRight = ' |'
     endif
+
     if ! exists('g:NeatFoldTextFoldLevelSymbol') || strlen('g:NeatFoldTextFoldLevelSymbol') != 1
         let g:NeatFoldTextFoldLevelSymbol = '-'
     endif
+
     if ! exists('g:NeatFoldTextFoldLevelScale')
         let g:NeatFoldTextFoldLevelScale = 0
     endif
+
     if ! exists('g:NeatFoldTextIndent')
         let g:NeatFoldTextIndent = 1
     endif
 
     if ! exists('g:NeatFoldTextShowLineCount')
         let g:NeatFoldTextShowLineCount = 1
+    endif
+
+    if ! exists('g:NeatFoldTextUnobstrusiveComments')
+        let g:NeatFoldTextUnobstrusiveComments = 0
     endif
 
     if ! exists('g:NeatFoldTextCountCommentsLines')
@@ -85,6 +95,10 @@ function s:SetClassicFoldText() "{{{
         let g:NeatFoldTextShowLineCount = 1
     endif
 
+    if ! exists('g:NeatFoldTextUnobstrusiveComments')
+        let g:NeatFoldTextUnobstrusiveComments = 0
+    endif
+
     if ! exists('g:NeatFoldTextCountCommentsLines')
         let g:NeatFoldTextCountCommentsLines = 0
     endif
@@ -101,31 +115,44 @@ endfunction
 "}}}
 
 function s:FoldMarkerIsOnSeparateLine() "{{{
-    return match(getline(v:foldstart), '^\s*["#/\*]*\s*{\{3}\d*\s*["#/\*]*$', 'g') != -1
+    let foldStartMarker = matchstr(&foldmarker, '^[^,]*')
+    return match(getline(v:foldstart), '^\s*["#/\*]*\s*' . foldStartMarker . 'd*\s*["#/\*]*$', 'g') != -1
 endfunction
 "}}}
 
-function s:RemoveCommentSymbols(text) "{{{
-    return substitute(a:text, '^\s*["#/\*]*\s*\|\s*["#/\*]*\s*{\{3}\d*\s*', '', 'g')
+function s:FilterInfo(text) "{{{
+    let foldStartMarker = matchstr(&foldmarker, '^[^,]*')
+    return substitute(a:text, '^\s*["#/\*]*\s*\|\s*["#/\*]*\s*' . foldStartMarker .'\d*\s*', '', 'g')
+endfunction
+"}}}
+
+function s:FoldStartsOnBracket() "{{{
+    return match(getline(v:foldstart), '^\s*{\s*$') != -1
 endfunction
 "}}}
 
 function s:GetFoldInfo() "{{{
     let info = ''
     " Check if multiline comments start with '/*' or '/**' on a separate line.
-    if match(getline(v:foldstart), '^\s*/\*\+\s*$') != -1
-        " Use the next line in the comment block, and add the '/*' or '/**'
-        " so that we know it's a block of comments or doc.
-        let info = substitute(getline(v:foldstart), '\s*', '', 'g') . ' '
-        let info = info . substitute(getline(v:foldstart + 1), '^\s*\*\+\s*', '', 'g')
+    if s:IsCommentBlock()
+        if g:NeatFoldTextUnobstrusiveComments == 1
+            let info = '/* … */'
+        elseif match(getline(v:foldstart), '^\s*/\*\+\s*$') != -1
+            " Use the next line in the comment block, and add the '/*' or '/**'
+            " so that we know it's a block of comments or doc.
+            let info = substitute(getline(v:foldstart), '\s*', '', 'g') . ' '
+            let info = info . substitute(getline(v:foldstart + 1), '^\s*\*\+\s*', '', 'g')
+        else
+            let info = getline(v:foldstart)
+        endif
     elseif s:FoldMarkerIsOnSeparateLine()
         let info = getline(v:foldstart + 1)
-        let info = s:RemoveCommentSymbols(info)
-    elseif s:IsCommentBlock()
-        let info = getline(v:foldstart)
+        let info = s:FilterInfo(info)
+    elseif s:FoldStartsOnBracket()
+        let info = '{ … }'
     else
         let info = getline(v:foldstart)
-        let info = s:RemoveCommentSymbols(info)
+        let info = s:FilterInfo(info)
     endif
     let info = ' ' . info . ' '
 
@@ -151,18 +178,11 @@ endfunction
 "}}}
 
 function s:IndentFold() "{{{
-    let indent = ''
     if g:NeatFoldTextIndent == 1
-        if match(getline(v:foldstart), '^ \+\S') != -1
-            let indent = repeat(' ', match(getline(v:foldstart), '\S'))
-        elseif match(getline(v:foldstart), '^\t\+\S') != -1
-            let indent = repeat(' ', match(getline(v:foldstart), '\S') * &tabstop)
-        " If the indentation of the current line is a mix of spaces and tabs...
-        " shall we bother?
-        endif
+        return repeat(' ', indent(v:foldstart))
+    else
+        return ''
     endif
-
-    return indent
 endfunction
 "}}}
 
