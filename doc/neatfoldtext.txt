@@ -1,0 +1,205 @@
+*neatfoldtext.txt*                                           Improve foldtext.
+*neatfoldtext*
+
+==============================================================================
+CONTENTS                                                 *neatfoldtext-contents*
+--------
+
+    1. Intro..................................|neatfoldtext-intro|
+    2. Usage..................................|neatfoldtext-usage|
+    3. Options................................|neatfoldtext-options|
+      3.1  Loaded.............................|g:loaded_NeatFoldText|
+      3.2  FillChar...........................|g:NeatFoldTextFillChar|
+      3.3  Symbol.............................|g:NeatFoldTextSymbol|
+      3.4  CountSurroundLeft..................|g:NeatFoldTextCountSurroundLeft|
+      3.5  CountSurroundRight.................|g:NeatFoldTextCountSurroundRight|
+      3.6  FoldLevelSymbol....................|g:NeatFoldTextFoldLevelSymbol|
+      3.7  FoldLevelScale.....................|g:NeatFoldTextFoldLevelScale|
+      3.8  Indent.............................|g:NeatFoldTextIndent|
+      3.9  ShowLineCount......................|g:NeatFoldTextShowLineCount|
+      3.10 CountCommentsLines.................|g:NeatFoldTextCountCommentsLines|
+      3.11 ZenComments........................|g:NeatFoldTextZenComments|
+      3.12 Fancy..............................|g:NeatFoldTextFancy|
+
+==============================================================================
+INTRO                                                       *neatfoldtext-intro*
+-----
+
+NeatFoldText is a little plugin which aims to improve your foldtext.
+Displaying relevant information on the current fold.
+
+
+==============================================================================
+USAGE                                                       *neatfoldtext-usage*
+-----
+
+...
+
+==============================================================================
+OPTIONS                                                   *neatfoldtext-options*
+-------
+
+NeatFoldText can be configured. Put these variables in your ~/.vimrc.
+
+Available options are:
+- |g:loaded_NeatFoldText|
+- |g:NeatFoldTextFillChar|
+- |g:NeatFoldTextSymbol|
+- |g:NeatFoldTextCountSurroundLeft|
+- |g:NeatFoldTextCountSurroundRight|
+- |g:NeatFoldTextFoldLevelSymbol|
+- |g:NeatFoldTextFoldLevelScale|
+- |g:NeatFoldTextIndent|
+- |g:NeatFoldTextShowLineCount|
+- |g:NeatFoldTextCountCommentsLines|
+- |g:NeatFoldTextZenComments|
+- |g:NeatFoldTextFancy|
+
+Apart from |g:NeatFoldTextFancy|, all these options can be changed at runtime.
+
+-------------------------------------------------------------------------------
+The 'g:loaded_NeatFoldText' option~
+                                                         *g:loaded_NeatFoldText*
+
+If you wish to completely disable NeatFoldText, set this to 1 in your ~/.vimrc.
+
+Example: >
+    let g:loaded_NeatFoldText = 1
+<
+
+-------------------------------------------------------------------------------
+The 'g:NeatFoldTextFillChar' option~
+                                                        *g:NeatFoldTextFillChar*
+
+The character used to fill the blanks in the foldtext. Per default, this
+option uses the character from |+fillchars| (if you did not change it, it
+should be '-').
+
+Example: >
+    let g:NeatFoldTextFillChar = '~'
+<
+Note: If |g:NeatFoldTextFancy| is set, this option defaults to '·'.
+
+-------------------------------------------------------------------------------
+The 'g:NeatFoldTextSymbol' option~
+                                                          *g:NeatFoldTextSymbol*
+
+The character used to denote the existence of a fold. Per default, this
+character is a '+'.
+
+Example: >
+    let g:NeatFoldTextSymbol = '▶'
+<
+Note: If |g:NeatFoldTextFancy| is set, this option defaults to '▸'.
+
+-------------------------------------------------------------------------------
+The 'g:NeatFoldTextCountSurround{Left, Right}' options~
+                                               *g:NeatFoldTextCountSurroundLeft*
+                                              *g:NeatFoldTextCountSurroundRight*
+
+The strings used to surround the lines count. Per default, these strings are
+'| ' and ' |'.
+
+Example: >
+    let g:NeatFoldTextCountSurroundLeft = '< '
+    let g:NeatFoldTextCountSurroundRight = ' >'
+<
+-------------------------------------------------------------------------------
+The 'g:NeatFoldTextFoldLevelSymbol' option~
+                                                 *g:NeatFoldTextFoldLevelSymbol*
+
+The character which will be repeated to show the folding level. This option is
+deeply linked to |g:NeatFoldTextFoldLevelScale|. For each level, the
+|g:NeatFoldTextFoldLevelSymbol| is repeated |g:NeatFoldTextFoldLevelScale|
+times. Per default, this character is '-'.
+
+Example: >
+    let g:NeatFoldTextFoldLevelSymbol = '*'
+<
+
+-------------------------------------------------------------------------------
+The 'g:NeatFoldTextFoldLevelScale' option~
+                                                  *g:NeatFoldTextFoldLevelScale*
+
+The number of times the |g:NeatFoldTextFoldLevelSymbol| shall be repeated for
+each folding level. Per default, this is set to 1.
+For instance, if this were set to 1, and the folding level were 2, the level
+would be represented as '--'. If this were set to 3, it would be '------'.
+Setting this option to 0 results in not showing the folding level at all.
+
+Example: >
+    let g:NeatFoldTextFoldLevelScale = 2
+<
+Note: If |g:NeatFoldTextFancy| is set, this option defaults to 0.
+
+-------------------------------------------------------------------------------
+The 'g:NeatFoldTextIndent' option~
+                                                          *g:NeatFoldTextIndent*
+
+Whether the foldtext should be indented. Per default this is set to 0 (the
+foldtext is not indented).
+
+Example: >
+    let g:NeatFoldTextIndent = 1
+<
+Note: If |g:NeatFoldTextFancy| is set, this option defaults to 1.
+
+-------------------------------------------------------------------------------
+The 'g:NeatFoldTextShowLineCount' option~
+                                                   *g:NeatFoldTextShowLineCount*
+
+Whether the line count should be displayed. Per default this is set to 1.
+
+Example: >
+    let g:NeatFoldTextShowLineCount = 0
+<
+Note: It is possible to disable the line count display for comments only. See
+|g:NeatFoldTextCountCommentsLines|.
+
+-------------------------------------------------------------------------------
+The 'g:NeatFoldTextCountCommentsLines' option~
+                                              *g:NeatFoldTextCountCommentsLines*
+
+Whether the line count should be displayed for comments. Per default this is
+set to 0.
+
+Example: >
+    let g:NeatFoldTextCountCommentsLines = 1
+<
+Note: It is possible to disable the line count display for every fold. See
+|g:NeatFoldTextShowLineCount|. If |g:NeatFoldTextFancy| is set, this option
+defaults to 1.
+
+-------------------------------------------------------------------------------
+The 'g:NeatFoldTextZenComments' option~
+                                                     *g:NeatFoldTextZenComments*
+
+If this option is set, the comments folds will try to be less obstrusive: only
+the fold symbol, the fold level and the text itself are shown.
+
+Example: >
+    let g:NeatFoldTextZenComments = 1
+<
+-------------------------------------------------------------------------------
+The 'g:NeatFoldTextFancy' option~
+                                                           *g:NeatFoldTextFancy*
+
+If this option is set, many other options are arbitrarily changed to "good"
+settings.
+
+Example: >
+    let g:NeatFoldTextFancy = 1
+<
+It is the same as: >
+    let g:NeatFoldTextFillChar = '·'
+    let g:NeatFoldTextSymbol = '▸'
+    let g:NeatFoldTextFoldLevelScale = 0
+    let g:NeatFoldTextIndent = 1
+    let g:NeatFoldTextCountCommentsLines = 1
+<
+Of course, any of these settings can be overriden.
+Note: As opposed to the other options, this option is read once at startup.
+Thus, changes of its value at runtime will not be taken into account, and it
+must be changed in your ~/.vimrc.
+
+vim: tw=78
